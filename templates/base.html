@@ -33,6 +33,17 @@
                 <a class="nav-link" href="{{ url_for('about')}}">About</a>
               </li>  
             </ul>
+            <div class="navbar-nav-right" style= "margin-left:auto">
+              <ul class="navbar-nav" > 
+             
+                  <li class="nav-item" >
+                    <a class="nav-link"  href="/signup">Signup</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link"  href="/login">Login</a>
+                  </li>     
+            </ul>
+          </div>
                  
           </div>
         </div>
@@ -42,6 +53,20 @@
       {% endblock %}
       </br>
     </div>
+    <!-- Flash messages-->
+      </br>
+      <div class="col-md-8" style="align-items: center;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}" style="margin-right: -500px;  text-align: center;">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </div>
+
     <!-- Bootstrap javascripts-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
   </body>

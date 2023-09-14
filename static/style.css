@@ -1,0 +1,8 @@
+.content-section {
+    background-color: white;
+    color: black;
+    max-width: 500px;
+    box-shadow: 4px 4px 8px 4px rgba(0, 0, 0, 0.2);        
+    margin-left: 30%;
+    padding: 20px;
+  }
