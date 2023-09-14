@@ -10,5 +10,5 @@ with open('secrets/db_secrets.json') as secret:
 
 class Config:
     SECRET_KEY = app_info['secret_key']
-    #SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{db_keys['new_user_key']}:{db_keys['new_user_pswd_key']}@localhost/{db_keys['new_db']}"
+    SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{db_keys['new_user_key']}:{db_keys['new_user_pswd_key']}@localhost/{db_keys['new_db']}"
     
