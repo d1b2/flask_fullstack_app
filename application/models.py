@@ -1,7 +1,12 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from application import db,login_manager
-from datetime import datetime
+from datetime import datetime,timedelta
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
+import jwt
+from application.utils import read_json
+from application.secret_filepaths import APP_INFO_SECRETS_PATH
+
+app_info=read_json(APP_INFO_SECRETS_PATH)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -30,6 +35,20 @@ class User(db.Model,UserMixin):
 
     def verify_password(self, user_entered_password):
         return check_password_hash(self.password_hash, user_entered_password)
+    
+    def get_reset_paswd_token(self, expiration_time=datetime.utcnow()+timedelta(minutes=10)):
+        payload={"user_id":self.id,"exp":expiration_time}
+        token= jwt.encode(payload, app_info['secret_key'], algorithm="HS256")
+        return token
+
+    @staticmethod
+    def verify_reset_token(token):        
+        try:
+            s = jwt.decode(token,app_info['secret_key'],algorithms=["HS256"])
+            user_id = s['user_id']            
+        except:
+            return None
+        return User.query.get(user_id)
     
     def __repr__(self):
         return f"User('{self.fullname}', '{self.username}', '{self.email}')"

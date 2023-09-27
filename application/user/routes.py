@@ -3,7 +3,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import login_user, current_user, logout_user, login_required
 from application import db
 from application.models import User
-from application.user.wforms import SignupForm, LoginForm
+from application.user.wforms import SignupForm, LoginForm,RequestResetPwdForm,ResetPasswordForm
+from application.user.utils import send_reset_email
 #import json
 
 
@@ -67,3 +68,33 @@ def logout():
 	flash("You Have Been Logged Out!  Thanks For Stopping By...",'info')
 	return redirect(url_for('user.login'))
 
+
+
+@user.route("/reset_password", methods=['GET', 'POST'])
+def reset_request():
+    form = RequestResetPwdForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user is None:
+            flash(f'here is no account with that email. Please sign up first.', 'danger')
+            return redirect(url_for('user.signup'))
+        send_reset_email(user)
+        flash('An email has been sent with instructions to reset your password.', 'info')
+        return redirect(url_for('user.login'))
+    return render_template('reset_request.html', form=form)
+
+
+@user.route("/reset_password/<token>", methods=['GET', 'POST'])
+def reset_token(token):
+    user = User.verify_reset_token(token)
+    if user is None:
+        flash('That is an invalid or expired token', 'warning')
+        return redirect(url_for('user.reset_request'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        hashed_pwd=generate_password_hash(form.password.data)        
+        user.password = hashed_pwd
+        db.session.commit()
+        flash('Your password has been updated! You are now able to log in', 'success')
+        return redirect(url_for('user.login'))
+    return render_template('reset_passwd.html',  form=form)

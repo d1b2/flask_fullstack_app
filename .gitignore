@@ -163,3 +163,5 @@ cython_debug/
 secrets/
 secret/
 secrets.json
+#
+secret_filepaths.py
